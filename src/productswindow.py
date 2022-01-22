@@ -1,11 +1,6 @@
-from cProfile import label
-from turtle import bgcolor, color, position
-from matplotlib.pyplot import text
-from sklearn import datasets
 import datamanager
 from tkinter import *
 from datamanager import Product
-from tkinter import messagebox
 from tkinter import ttk
 import editwindow
 

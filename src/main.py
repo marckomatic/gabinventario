@@ -2,7 +2,6 @@ from tkinter import *
 from PIL import Image, ImageTk
 import createwindow
 import productswindow
-import datamanager
 
 
 #Main window

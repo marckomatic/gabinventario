@@ -1,4 +1,3 @@
-from math import prod
 import sqlite3
 
 class Product:
