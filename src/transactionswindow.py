@@ -1,10 +1,8 @@
-from tkinter import filedialog
 import datamanager
 from tkinter import *
 from datamanager import Product
 from tkinter import ttk
-import editwindow
-import pandas as pd
+import addtransanctionwindow
 
 def open():
     def doubleClickOnTableItem(event):
@@ -16,7 +14,8 @@ def open():
         producto.price = float(item[3]) if item[3] != 'None' else 0
         producto.quantity = int(item[4]) if item[4] != 'None' else 0
         producto.lastInventary = item[5]
-        editwindow.open(producto, updateTable)
+        addtransanctionwindow.open(producto)
+        print('clicked ' + producto.name)
 
     def updateTable(type):
         dataSet.delete(*dataSet.get_children())
@@ -41,22 +40,11 @@ def open():
     def coincidenceSearchCallback(*args):
         updateTable("coincidence")
 
-    def saveToExcel():
-        filetypes = (
-            ('Archivo de excel', '*.xls'),
-        )
-        excelFilePath = filedialog.asksaveasfilename(title='Guardar en archivo de excel.', filetypes=filetypes, defaultextension=".xls")
-        query = datamanager.searchByName('')
-        cols = [column[0] for column in query.description]
-        dataFrame = pd.DataFrame.from_records(data = query.fetchall(), columns=cols, index='codigo')
-        dataFrame.to_excel(excelFilePath, 'productos')    
-    
-
     windowForProducts = Toplevel()
     windowForProducts.grab_set()
-    windowForProducts.title('Adminsitrar Productos')
+    windowForProducts.title('Transacciones')
     mainFrame = LabelFrame(windowForProducts, text='Búsqueda', borderwidth=4)
-    mainFrame.pack(padx=10, pady=10)
+    mainFrame.grid(row=1, column=1, padx=10, pady=10)
 
     txtNameSearch = StringVar()
     txtNameSearch.trace_add("write", searchCallback)
@@ -72,12 +60,9 @@ def open():
     coincidenceSearchInput = Entry(mainFrame, textvariable=txtCoincidenceSearch)
     coincidenceSearchInput.grid(row=2, column=3, padx=10, pady=10)
 
-    btnLimpiar = Button(mainFrame, text="Buscar Incompletos",command=lambda: updateTable('nones'))
-    btnLimpiar.grid(row=3, column=2,padx=10, pady=10)
-
     #table frame
     tableFrame = LabelFrame(windowForProducts, text='Productos Disponibles', borderwidth=4)
-    tableFrame.pack(padx=10, pady=10)
+    tableFrame.grid(row = 2, column=1, padx=10, pady=10)
     dataSet = ttk.Treeview(tableFrame)
     dataSet.pack()
     dataSet['columns']=('codigo', 'nombre', 'precio_costo', 'precio_venta', 'existencia', 'fecha_inventario',)
@@ -87,7 +72,7 @@ def open():
     dataSet.column("precio_costo",anchor=CENTER, width=80)
     dataSet.column("precio_venta",anchor=CENTER, width=80)
     dataSet.column("existencia",anchor=CENTER, width=80)
-    dataSet.column("fecha_inventario",anchor=CENTER, width=80)
+    dataSet.column("fecha_inventario",anchor=CENTER, width=100)
 
     dataSet.heading("#0",text="",anchor=CENTER)
     dataSet.heading("codigo",text="Codigo",anchor=CENTER)
@@ -97,13 +82,6 @@ def open():
     dataSet.heading("existencia",text="Existencia",anchor=CENTER)
     dataSet.heading("fecha_inventario",text="Último Inventario",anchor=CENTER)
     updateTable('name')
-
-    optionsFrame = LabelFrame(windowForProducts, text='Opciones', borderwidth=4)
-    optionsFrame.pack(padx=10, pady=10)
-    btnGuardar = Button(optionsFrame, text="Guardar en Excel", bg="blue", fg="white", command=saveToExcel)
-    btnGuardar.pack(side="left",padx=10, pady=10)
-    btnLimpiar = Button(optionsFrame, text="BORRAR TODO", bg="red", fg="white")
-    btnLimpiar.pack(side="left",padx=10, pady=10)
 
     windowForProducts.resizable(width=False, height=False)
     windowForProducts.mainloop()

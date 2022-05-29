@@ -1,3 +1,4 @@
+from datetime import datetime
 import datamanager
 from tkinter import *
 from datamanager import Product
@@ -8,7 +9,7 @@ def open(product:Product, updateTableFunction):
     windowForCreate.grab_set()
     windowForCreate.title('Editar Producto')
 
-    mainFrame = LabelFrame(windowForCreate, text='Información de Producto', borderwidth=4)
+    mainFrame = LabelFrame(windowForCreate, text= 'Información de Producto No. ' + str(product.codigo), borderwidth=4)
     mainFrame.pack(padx=10, pady=10)
 
     productName = StringVar()
@@ -39,27 +40,38 @@ def open(product:Product, updateTableFunction):
     quantityInput = Entry(mainFrame, textvariable=txtQuantity)
     quantityInput.grid(row=4, column=2, padx=5, pady=5)
     
+    txtLastInventary = StringVar()
+    txtLastInventary.set(str(product.lastInventary))
+    dateLabel = Label(mainFrame, text="Último Inventario")
+    dateLabel.grid(row=5, column=1, padx=5, pady=5)
+    lastInventaryLabel = Label(mainFrame, textvariable=txtLastInventary)
+    lastInventaryLabel.grid(row=5, column=2, padx=5, pady=5)
+
+
     def clickGuardar():
         if(updateProduct(windowForCreate, product.codigo, productName.get(), txtCostPrice.get(), txtPrice.get(), txtQuantity.get())):
-            updateTableFunction()  
+            updateTableFunction('name') 
+            txtLastInventary.set(str(datetime.now().date()))
+ 
     def clickBorrar():
         response = messagebox.askokcancel("Cuidado!", "¿Está seguro de que desea borrar este producto?", parent=windowForCreate)
         if(response):
             datamanager.deleteProduct(product.codigo)
-            updateTableFunction()
+            updateTableFunction('name')
             windowForCreate.destroy()
 
     btnGuardar = Button(mainFrame, text='Guardar Cambios', command=clickGuardar)
-    btnGuardar.grid(row=5, column=1, padx=5, pady=5)
+    btnGuardar.grid(row=6, column=1, padx=5, pady=5)
 
     btnEliminar = Button(mainFrame, text='Eliminar Producto', command=clickBorrar)
-    btnEliminar.grid(row=5, column=2, padx=5, pady=5)
+    btnEliminar.grid(row=6, column=2, padx=5, pady=5)
     
     btnCancelar = Button(mainFrame, text='Cancelar', command=windowForCreate.destroy)
-    btnCancelar.grid(row=5, column=3, padx=5, pady=5)
+    btnCancelar.grid(row=6, column=3, padx=5, pady=5)
 
+
+    windowForCreate.resizable(width=False, height=False)
     windowForCreate.mainloop()
-
 
 def updateProduct(windowForCreate, codigo, name, txtCost, txtPrice, txtquantity):
     product:Product = Product()
@@ -96,7 +108,6 @@ def updateProduct(windowForCreate, codigo, name, txtCost, txtPrice, txtquantity)
             messagebox.showerror('Error', 'La cantidad del producto debe de ser un número entero válido.', parent=windowForCreate)
             return False
         product.quantity = 0
-    
     datamanager.updateProduct(product)
     return True
 

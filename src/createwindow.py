@@ -42,12 +42,10 @@ def open():
         producto = Product()
         producto.codigo = int(item[0])
         producto.name = item[1]
-        producto.cost = float(item[2])
-        producto.price = float(item[3])
-        producto.quantity = int(item[4])
-        producto.output = float(item[5])
-        producto.entry = float(item[6])
-        producto.total = float(item[7])
+        producto.cost =  float(item[2]) if item[2] != 'None' else 0
+        producto.price = float(item[3]) if item[3] != 'None' else 0
+        producto.quantity = int(item[4]) if item[4] != 'None' else 0
+        producto.lastInventary = item[5]
         editwindow.open(producto, updateTableFromOutside)
 
     def updateTable(dataSet):
@@ -82,16 +80,14 @@ def open():
     tableFrame.pack(padx=10, pady=10)
     dataSet = ttk.Treeview(tableFrame)
     dataSet.pack()
-    dataSet['columns']=('codigo', 'nombre', 'precio_costo', 'precio_venta', 'existencia', 'venta', 'entrada', 'total')
+    dataSet['columns']=('codigo', 'nombre', 'precio_costo', 'precio_venta', 'existencia', 'ultimo_inventario')
     dataSet.column("#0", width=0,  stretch=NO)
     dataSet.column("codigo",anchor=CENTER, width=50)
-    dataSet.column("nombre",anchor=CENTER, width=200)
+    dataSet.column("nombre",anchor=CENTER, width=300)
     dataSet.column("precio_costo",anchor=CENTER, width=80)
     dataSet.column("precio_venta",anchor=CENTER, width=80)
     dataSet.column("existencia",anchor=CENTER, width=80)
-    dataSet.column("venta",anchor=CENTER, width=50)
-    dataSet.column("entrada",anchor=CENTER, width=50)
-    dataSet.column("total",anchor=CENTER, width=50)
+    dataSet.column("ultimo_inventario",anchor=CENTER, width=100)
 
     dataSet.heading("#0",text="",anchor=CENTER)
     dataSet.heading("codigo",text="Codigo",anchor=CENTER)
@@ -99,13 +95,11 @@ def open():
     dataSet.heading("precio_costo",text="Precio Costo",anchor=CENTER)
     dataSet.heading("precio_venta",text="Precio Venta",anchor=CENTER)
     dataSet.heading("existencia",text="Existencia",anchor=CENTER)
-    dataSet.heading("venta",text="Venta",anchor=CENTER)
-    dataSet.heading("entrada",text="Entrada",anchor=CENTER)
-    dataSet.heading("total",text="Total",anchor=CENTER)
+    dataSet.heading("ultimo_inventario",text="Fecha Inventario",anchor=CENTER)
     updateTable(dataSet)
 
+    windowForCreate.resizable(False, False)
     windowForCreate.mainloop()
-
 
 def createProduct(windowForCreate, name, txtCost, txtPrice, txtquantity):
     product:Product = Product()
